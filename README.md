@@ -1,2 +1,2 @@
-# browser-pong
-A networked browser pong game primarily written in node.js
+# nodejs-pong
+a multiplayer browser pong game written in nodejs.

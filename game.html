@@ -1,0 +1,264 @@
+<html>
+  <head>
+    <style>
+        body {
+            background-color: #C9D5DB;
+        }
+        .popup {
+            display: none;
+
+            position: fixed;
+            left: 40%;
+            top: 5%;
+
+            border-radius: 20px;
+            width: 20%;
+            height: 20%;
+
+            border: 2px solid orange;
+
+            color: gray;
+            background-color:white;
+
+            z-index: 9999999;
+        }
+
+        .popup.active {
+            display: block;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .backdrop {
+        }
+
+        .backdrop.active::before {
+            content: '';
+            display: block;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 999
+        }
+
+        table, th, td {
+            border-collapse: collapse;
+            padding: 10px;
+            font-family: monospace;
+        }
+        #instructions_link {
+            cursor: pointer;
+            text-align: left;
+        }
+        #instructions_link:hover {
+            color: #0000FF;
+        }
+        .wholecontainer {
+            background-color: #00AA00;
+            padding: 24px;
+            width: 50%;
+            border-radius: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        .child {
+            flex: 1;
+        }
+        #lobby {
+            width: 20%;
+            background-color: #BFBFBF;
+            border-radius: 20px;
+            flex: none;
+        }
+        #chat {
+            text-align: left;
+            overflow-y: auto;
+            border: 2px solid black;
+            border-radius: 20px;
+            width: 52%;
+            height: 100px;
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #FED7B0;
+            padding: 10px;
+
+            scrollbar-width: thin;
+            scrollbar-color: #888 transparent;
+        }
+        #chat_input_text {
+            width: 49.5%;
+        }
+        .sid:hover {
+            cursor: pointer;
+            color: blue;
+        }
+    </style>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'></script>
+    <script>
+        const socket = io();
+
+        socket.on('game_state', (data) => {
+            updateGameState(data);
+        });
+
+        socket.on('gameover', (data) => {
+            gameOver(data);
+        });
+
+        socket.on('opp_disconn', (data) => {
+            alert('opponent disconnected :\\');
+        });
+
+        socket.on('ur_username', (username) => {
+            document.getElementById('greeting').innerHTML = 'welcome, '+username+'.';
+        });
+
+        socket.on('lobby', (user_dict) => {
+            let nu_inner_html = '';
+
+            for(let i = 0; i < user_dict.length; i += 1) {
+                nu_inner_html += '<tr>';
+
+                if(user_dict[i][0] == socket.id) {
+                    nu_inner_html += '<td>'+user_dict[i][1]+'</td>';
+                }
+                else {
+                    nu_inner_html += '<td class="sid" onClick=openUserSubMenu("'+user_dict[i][0]+'")>'+user_dict[i][1]+'</td>';
+                    nu_inner_html += '<td id="menu_'+user_dict[i][0]+'"></td>';
+                }
+
+                nu_inner_html += '</tr>';
+            }
+
+            document.getElementById('users_connected').innerHTML = nu_inner_html;
+        });
+
+        //prompt the user to accept challenge from other user.
+        socket.on('challenge_request', (data) => {
+            const div = document.getElementById('accept_challenge_div');
+
+            let div_html = 'Accept challenge from '+data[1]+'?';
+            div_html += '<button onClick=acceptChallenge("'+data[0]+'") type="button">ya</button>';
+            div_html += '<button onClick=declineChallenge() type="button">nah</button>';
+
+            div.innerHTML = div_html;
+        });
+
+        //let's start a match!
+        socket.on('challenge_start', (data) => {
+            document.getElementById('challenge_start_div').innerHTML = 'Begin game with '+data[1];
+            beginGame();
+        });
+
+        //listen for updates to chat log
+        socket.on('chatlog', (data) => {
+            document.getElementById('chat').innerHTML = data;
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+        });
+
+        function acceptChallenge(target_user) {
+            document.getElementById('accept_challenge_div').innerHTML = 'challenge accepted.';
+            socket.emit('challenge_accept', target_user);
+        }
+
+        function declineChallenge() {
+            document.getElementById('accept_challenge_div').innerHTML = 'challenge declined.';
+        }
+
+        /* submits a request to play with user based on their User ID */
+        function requestChallenge(target_user) {
+            document.getElementById('confirm_challenge_div').innerHTML = 'ok. challenge sent.';
+            socket.emit('challenge_request', target_user);
+        }
+
+        /* confirms that the user wants to challenge someone */
+        function challengeConfirmation(target_user) {
+            console.log(target_user, socket.id);
+            const confirm_div = document.getElementById('confirm_challenge_div');
+
+            let div_html = 'U sure u want to challenge ?';
+            div_html += '<button onClick=requestChallenge("'+target_user+'") type="button">ya</button>';
+            div_html += '<button onClick=cancelConfirmation() type="button">nah</button>';
+
+            confirm_div.innerHTML = div_html;
+        }
+
+        async function getStatsString(target_user) {
+
+            const res = await fetch('/nodejs_pong/get_stats', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({target_user})
+            });
+
+            const data = await res.json();
+            return data.stat_string;
+        }
+
+        //opens to menu with stats or challenge options
+        async function openUserSubMenu(target_user) {
+            const td = document.querySelector("#menu_"+target_user);
+
+            const stats_string = await getStatsString(target_user);
+            td.innerHTML = stats_string+' <button onclick=requestChallenge("'+target_user+'")>chall</button>';
+
+            //we're gonna close any other potentially open submenu
+            //(there's probably a neater way to do this)
+            const user_menus = document.querySelectorAll('[id^="menu_"]');
+            for(const menu of user_menus) {
+                const sid = menu.id.split("_")[1];
+                if(sid != target_user) {
+                    menu.innerHTML = '';
+                }
+            }   
+        }
+
+        function cancelConfirmation() {
+            document.getElementById('confirm_challenge_div').innerHTML = '';
+        }
+
+        function submitChat() {
+            const message = document.getElementById('chat_input_text').value;
+            socket.emit('general_message', message);
+            document.getElementById('chat_input_text').value = '';
+        }
+
+    </script>
+  </head>
+  <body>
+    <center>
+     <div class='popup'>
+         <h3><u>Instructions</u></h3><br />
+         <ul>
+             <li>click on another user in the lobby to challenge them to a match.</li>
+             <li>paddle movement is up/down arrow on keyboard.</li>
+             <li>first player to 5 points wins.</li>
+         </ul>
+    </div>
+     <div class='backdrop'></div>
+     <div class='wholecontainer'>
+         <div id='instructions_link'>click here for instructions.</div>
+     <div id='greeting'></div>
+     <div class='container'>
+        <div class='child' id='lobby'>
+            <u>users online</u>
+            <table id='users_connected'></table>
+            <div id='confirm_challenge_div'></div>
+            <div id='accept_challenge_div'></div>
+            <div id='challenge_start_div'></div>
+        </div>
+        <div class='child' id='game' style='flex: none; width=40%'></div>
+     </div>
+     general chat:
+     <div id='chat'></div>
+     <input type='text' id='chat_input_text'></input><button onClick=submitChat()>submit</button>
+     </div>
+    </center>
+     <script src='/nodejs_pong/game_event_listeners.js'></script>
+     <script src='/nodejs_pong/game_engine.js'></script>
+  </body>
+</html>

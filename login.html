@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <style>
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+            }
+            .loginbox {
+                height: 300px;
+                width: 400px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+        </style>
+    </head>
+    <body style='background-color: #C9D5DB;'>
+        <div class='loginbox' style='background-color: #BFBFBF; border-radius: 20px'>
+            <div style='top: 50px; position: absolute;'> welcome to pong!</div>
+            <div>username:<input type='text' id='username'></input></div><br />
+            <div>password:<input type='password' id='password'></input></div><br />
+            <div><button id='register_button'>register</button>
+            <button id='login_button'>login</button></div><br >
+            <div id='response_message_div'>testing</div>
+            <div style='font-size: 10px; bottom: 0; position: absolute;'>
+                <b>pwds salted/hashed, but no ssl. use a throwaway pwd.</b>
+            </div>
+        </div>
+
+        <!-- the javascript stuffs -->
+
+        <script>
+            async function tryRegister() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                const res = await fetch('/nodejs_pong/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await res.json();
+                if(data.username_taken != undefined) {
+                    if(data.username_taken) {
+                        document.getElementById('response_message_div').innerHTML = "username taken :(";
+                    }
+                    else {
+                        document.getElementById('response_message_div').innerHTML = ('created new user! welcome :)');
+                    }
+                }
+                else {
+                    if(data.bad_username) {
+                        document.getElementById('response_message_div').innerHTML = 'couldnt register. no spaces allowed in usernames.';
+                    }
+                }
+            }
+
+            async function tryLogin() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                const res = await fetch('/nodejs_pong/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await res.json();
+                if(data.login_successful) {
+                    window.location.href = '/nodejs_pong';
+                }
+                else {
+                    document.getElementById('response_message_div').innerHTML = 'invalid username/password.';
+                }
+            }
+
+            document.getElementById('register_button').addEventListener('click', tryRegister);
+            document.getElementById('login_button').addEventListener('click', tryLogin);
+        </script>
+    </body>
+</html>
