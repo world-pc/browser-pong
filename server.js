@@ -211,9 +211,16 @@ async function main() {
         });
 
         socket.on('challenge_request', (data) => {
-            console.log('received "challenge_request" from '+socket.id);
-            console.log('sending "challenge_request" to '+data);
-            io.to(data).emit('challenge_request', [socket.id, connected_users[socket.id]]);
+
+            //we can't let a user challenge themselves
+            if(connected_users[data].split(" ")[0] == connected_users[socket.id].split(" ")[0]) {
+                console.log("users can't challenge themselves..");
+            }
+            else {
+                console.log('received "challenge_request" from '+socket.id);
+                console.log('sending "challenge_request" to '+data);
+                io.to(data).emit('challenge_request', [socket.id, connected_users[socket.id]]);
+            }
         });
 
         //here data is the user that sent the original challenge.
