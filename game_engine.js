@@ -237,24 +237,6 @@ function animate(time) {
     p1_paddle.position.y = p1_pos;
     p2_paddle.position.y = p2_pos;
 
-    /* ball physics */
-    
-    //check for out of bounds (goals included)
-    /*if(ball_y >= 4.5) {
-        ball_vy *= -1;
-    }
-    if(ball_y <= -4.5) {
-        ball_vy *= -1;
-    }
-    if(ball_x <= -6.9) {
-        console.log('GOAAAAL!!!');
-        goalMade('p1');
-    }
-    if(ball_x >= 6.9) {
-        console.log('GOAAAAL!!!');
-        goalMade('p2');
-    } */
-
     //update ball position
     ball.position.x = ball_x;
     ball.position.y = ball_y;
