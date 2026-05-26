@@ -1,5 +1,3 @@
-//import * as THREE from 'three';
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(90, 600/400, 0.1, 1000);
 
@@ -10,6 +8,10 @@ document.getElementById('game').appendChild(renderer.domElement);
 renderer.domElement.style.borderRadius = '20px';
 
 renderer.setAnimationLoop(animate);
+
+let intro_animation = true;
+function introAnimation() {
+}
 
 //stores y-coordinate for player paddles
 let p1_pos = 1,
@@ -233,13 +235,19 @@ function updateGameState(data) {
 
 function animate(time) {
 
-    //update paddle positions
-    p1_paddle.position.y = p1_pos;
-    p2_paddle.position.y = p2_pos;
+    if(intro_animation) {
+        introAnimation();
+    }
 
-    //update ball position
-    ball.position.x = ball_x;
-    ball.position.y = ball_y;
+    else {
+        //update paddle positions
+        p1_paddle.position.y = p1_pos;
+        p2_paddle.position.y = p2_pos;
+
+        //update ball position
+        ball.position.x = ball_x;
+        ball.position.y = ball_y;
+    }
 
     renderer.render(scene, camera);
 }
