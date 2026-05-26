@@ -11,6 +11,11 @@ renderer.setAnimationLoop(animate);
 
 let intro_animation = true;
 function introAnimation() {
+    //rotate the camera about the origin
+    camera.position.x = 5.0*Math.cos(frame_count * 0.005)+1;
+    camera.position.z = 5.0*Math.sin(frame_count * 0.005)-1;
+    camera.position.y = 2;
+    camera.lookAt(1,0,-1);
 }
 
 //stores y-coordinate for player paddles
@@ -34,7 +39,7 @@ let p1_move_state = 'neutral',
     p2_move_state = 'netural';
 
 //paddle rendering stuffs
-const paddle_geo = new THREE.BoxGeometry(0.25, 1, 0.1);
+const paddle_geo = new THREE.BoxGeometry(0.25, 1, 1);
 const paddle_mat = new THREE.MeshBasicMaterial({color: 0xffffff});
 
 const p1_paddle = new THREE.Mesh(paddle_geo, paddle_mat);
@@ -48,7 +53,7 @@ p2_paddle.position.x = 6;
 scene.add(p2_paddle);
 
 //game bounds rendering stuffs
-const vert_bounds_geo = new THREE.BoxGeometry(16, 0.1, 0.1);
+const vert_bounds_geo = new THREE.BoxGeometry(16, 0.1, 2);
 const vert_bounds_mat = new THREE.MeshBasicMaterial({color: 0x0000ff});
 
 const top_vert_bound = new THREE.Mesh(vert_bounds_geo, vert_bounds_mat);
@@ -59,7 +64,7 @@ const bot_vert_bound = new THREE.Mesh(vert_bounds_geo, vert_bounds_mat);
 bot_vert_bound.position.y = -5;
 scene.add(bot_vert_bound);
 
-const horiz_bounds_geo = new THREE.BoxGeometry(0.1, 10, 0.1);
+const horiz_bounds_geo = new THREE.BoxGeometry(0.1, 10, 2);
 const horiz_bounds_mat = new THREE.MeshBasicMaterial({color: 0x0000ff});
 
 const left_horiz_bound = new THREE.Mesh(horiz_bounds_geo, horiz_bounds_mat);
@@ -233,6 +238,8 @@ function updateGameState(data) {
     }
 }
 
+let frame_count = 0;
+
 function animate(time) {
 
     if(intro_animation) {
@@ -248,6 +255,8 @@ function animate(time) {
         ball.position.x = ball_x;
         ball.position.y = ball_y;
     }
+
+    frame_count += 1;
 
     renderer.render(scene, camera);
 }
