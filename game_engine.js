@@ -12,10 +12,10 @@ renderer.setAnimationLoop(animate);
 let idle_animation = true;
 function idleAnimation() {
     //rotate the camera about the origin
-    camera.position.x = 5.0*Math.cos(frame_count * 0.005)+1;
-    camera.position.z = 5.0*Math.sin(frame_count * 0.005)-1;
+    camera.position.x = 18.0*Math.cos(frame_count * 0.005)+1;
+    camera.position.z = 18.0*Math.sin(frame_count * 0.005)-1;
     camera.position.y = 2;
-    camera.lookAt(1,0,-1);
+    camera.lookAt(0, 0, 0);
 }
 
 //stores y-coordinate for player paddles
