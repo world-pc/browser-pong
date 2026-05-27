@@ -9,8 +9,8 @@ renderer.domElement.style.borderRadius = '20px';
 
 renderer.setAnimationLoop(animate);
 
-let intro_animation = true;
-function introAnimation() {
+let idle_animation = true;
+function idleAnimation() {
     //rotate the camera about the origin
     camera.position.x = 5.0*Math.cos(frame_count * 0.005)+1;
     camera.position.z = 5.0*Math.sin(frame_count * 0.005)-1;
@@ -87,6 +87,15 @@ camera.position.z = 5;
 
 function beginGame() {
     console.log('game started..');
+
+    //end the idle animation and setup camera for game
+    idle_animation = false;
+
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = 5;
+    camera.lookAt(0, 0, 0);
+
     if(game_over_text) {
         game_over_text.visible = false;
         scene.remove(game_over_text);
@@ -191,6 +200,8 @@ let game_over_text;
 function gameOver(data) {
     console.log('game over...');
 
+    setTimeout(function() {idle_animation = true;}, 5000);
+
     let gameover_text_geo;
     if(data['victor'] === 'you') {
         gameover_text_geo = new THREE.TextGeometry('you win!',
@@ -242,8 +253,8 @@ let frame_count = 0;
 
 function animate(time) {
 
-    if(intro_animation) {
-        introAnimation();
+    if(idle_animation) {
+        idleAnimation();
     }
 
     else {
