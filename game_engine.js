@@ -53,7 +53,7 @@ p2_paddle.position.x = 6;
 scene.add(p2_paddle);
 
 //game bounds rendering stuffs
-const vert_bounds_geo = new THREE.BoxGeometry(16, 0.1, 2);
+const vert_bounds_geo = new THREE.BoxGeometry(15, 0.1, 2);
 const vert_bounds_mat = new THREE.MeshBasicMaterial({color: 0x0000ff});
 
 const top_vert_bound = new THREE.Mesh(vert_bounds_geo, vert_bounds_mat);
