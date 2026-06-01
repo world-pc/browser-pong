@@ -67,6 +67,8 @@
         .child {
             flex: 1;
         }
+        .pong_bot {
+        }
         #lobby {
             width: 20%;
             background-color: #BFBFBF;
@@ -119,6 +121,9 @@
 
         socket.on('lobby', (user_dict) => {
             let nu_inner_html = '';
+
+            //add the option to play against the pong bot
+            nu_inner_html += '<tr><td class="pong_bot" onClick=challengeBotConfirmation()>pong bot</td></tr>';
 
             for(let i = 0; i < user_dict.length; i += 1) {
                 nu_inner_html += '<tr>';
