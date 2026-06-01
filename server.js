@@ -223,6 +223,25 @@ async function main() {
             }
         });
 
+        socket.on('bot_challenge_request', () => {
+            console.log('received bot challenge request.');
+
+            let in_a_match = false;
+
+            //check to make sure the requester isn't in the middle of a match
+            for(let i = 0; i < matches.length(); i += 1) {
+                if(matches[i].p1_sid == socket.id ||
+                   matches[i].p2_sid == socket.id) {
+                    in_a_match = true;
+                    break;
+                }
+            }
+
+            if(!in_a_match) {
+                startNewMatch(socket.id, undefined);
+            }
+        });            
+
         //here data is the user that sent the original challenge.
         socket.on('challenge_accept', (data) => {
             console.log(socket.id + ' has accepted '+data+"'s challenge.");

@@ -127,7 +127,8 @@
             let nu_inner_html = '';
 
             //add the option to play against the pong bot
-            nu_inner_html += '<tr><td class="pong_bot" onClick=challengeBotConfirmation()>pong bot</td></tr>';
+            nu_inner_html += '<tr><td class="pong_bot" onClick=botChallengeConfirmation()>pong bot</td>';
+            nu_inner_html += '<td class="pong_bot_menu"></td></tr>';
 
             for(let i = 0; i < user_dict.length; i += 1) {
                 nu_inner_html += '<tr>';
@@ -184,6 +185,10 @@
             socket.emit('challenge_request', target_user);
         }
 
+        function requestBotChallenge() {
+            socket.emit('bot_challenge_request');
+        }
+
         /* confirms that the user wants to challenge someone */
         function challengeConfirmation(target_user) {
             console.log(target_user, socket.id);
@@ -194,6 +199,12 @@
             div_html += '<button onClick=cancelConfirmation() type="button">nah</button>';
 
             confirm_div.innerHTML = div_html;
+        }
+
+        /* confirms that the user wants to challenge the pong bot */
+        function botChallengeConfirmation() {
+            const menu = document.querySelector('.pong_bot_menu');
+            menu.innerHTML = '<button onClick=requestBotChallenge()>Challenge bot?</button>';
         }
 
         async function getStatsString(target_user) {
