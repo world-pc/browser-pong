@@ -240,6 +240,7 @@ async function main() {
 
             if(!in_a_match) {
                 startNewMatch(socket.id, undefined);
+                socket.emit('challenge_start', [undefined, undefined]);
             }
         });            
 
@@ -426,7 +427,7 @@ class Match {
                 }
             }
             else if(bot_ms == 'down') {
-                if(this.ps2_pos > -4.5) {
+                if(this.p2_pos > -4.5) {
                     this.p2_pos -= 0.1;
                 }
             }
