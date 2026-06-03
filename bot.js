@@ -12,8 +12,9 @@ module.exports = {
                return 'up';
            } else if(ball_y < paddle_ypos) {
                return 'down';
+           }
         }
 
         return 'neutral';
     }
-};
+}

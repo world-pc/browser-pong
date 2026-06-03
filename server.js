@@ -4,6 +4,7 @@ const fs = require('fs');
 const argon2 = require('argon2');
 const crypto = require('crypto');
 const mysql = require('mysql2/promise');
+const bot = require('./bot.js')
 
 const sessions = {};
 const connected_users = {};
@@ -229,7 +230,7 @@ async function main() {
             let in_a_match = false;
 
             //check to make sure the requester isn't in the middle of a match
-            for(let i = 0; i < matches.length(); i += 1) {
+            for(let i = 0; i < matches.length; i += 1) {
                 if(matches[i].p1_sid == socket.id ||
                    matches[i].p2_sid == socket.id) {
                     in_a_match = true;
@@ -412,14 +413,34 @@ class Match {
             }
         }
 
-        if(this.p2_move_state == 'up') {
-            if(this.p2_pos < 4.5) {
-                this.p2_pos += 0.1;
+        //shorten this code later
+        if(this.p2_sid == undefined) {
+            let bot_ms = bot.botMoveState(this.ball_x, this.ball_y,
+                                          this.ball_vx, this.ball_vy,
+                                          this.p2_pos, 1);
+            console.log(bot_ms);
+
+            if(bot_ms == 'up') {
+                if(this.p2_pos < 4.5) {
+                    this.p2_pos += 0.1;
+                }
+            }
+            else if(bot_ms == 'down') {
+                if(this.ps2_pos > -4.5) {
+                    this.p2_pos -= 0.1;
+                }
             }
         }
-        else if(this.p2_move_state == 'down') {
-            if(this.p2_pos > -4.5) {
-                this.p2_pos -= 0.1;
+        else {
+            if(this.p2_move_state == 'up') {
+                if(this.p2_pos < 4.5) {
+                    this.p2_pos += 0.1;
+                }
+            }
+            else if(this.p2_move_state == 'down') {
+                if(this.p2_pos > -4.5) {
+                    this.p2_pos -= 0.1;
+                }
             }
         }
     }
@@ -438,9 +459,11 @@ class Match {
 
         io.to(this.p1_sid).emit('game_state', game_data);
 
-        game_data['which_player'] = 'p2';
+        if(!(this.p2_sid == undefined)) {
+            game_data['which_player'] = 'p2';
 
-        io.to(this.p2_sid).emit('game_state', game_data);
+            io.to(this.p2_sid).emit('game_state', game_data);
+        }
     }
 }
 
