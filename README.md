@@ -6,4 +6,4 @@ a multiplayer browser pong game written in nodejs.
 * ~~implement pong bot~~
 * username highlighting (@ too) in chat.
 * prevent challenges to players in matches.
-* sometimes the submenu on another user doesn't appear.
+* ~~ sometimes the submenu on another user doesn't appear. ~~

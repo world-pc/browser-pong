@@ -137,7 +137,7 @@ async function main() {
             req.on('end', async () => {
                 const data = JSON.parse(body);
 
-                const [rows] = await conn.query('SELECT * FROM users WHERE username = ?', [connected_users[data['target_user']].split(' ')[0]]);
+                const [rows] = await conn.query('SELECT * FROM users WHERE username = ?', [connected_users[data['target_user']]?.split(' ')[0]]);
                 console.log('stat string info!');
                 console.log(rows);
 
@@ -214,7 +214,7 @@ async function main() {
         socket.on('challenge_request', (data) => {
 
             //we can't let a user challenge themselves
-            if(connected_users[data].split(" ")[0] == connected_users[socket.id].split(" ")[0]) {
+            if(connected_users[data]?.split(" ")[0] == connected_users[socket.id]?.split(" ")[0]) {
                 console.log("users can't challenge themselves..");
             }
             else {
@@ -274,7 +274,7 @@ async function main() {
 function addAWin(given_username, conn) {
     /* accepts a username & mysql server connection and increments their 'wins' field in the database */
 
-    const username = given_username.split(' ')[0]; //handle duplicate users.
+    const username = given_username?.split(' ')[0]; //handle duplicate users.
 
     conn.query("UPDATE users SET wins = wins + 1 WHERE username = ?", [given_username]);
 }
@@ -282,7 +282,7 @@ function addAWin(given_username, conn) {
 function addALoss(given_username, conn) {
     /* accepts a username & mysql server connection and increments their 'losses' field in the database */
 
-    const username = given_username.split(' ')[0]; //handle duplicate users.
+    const username = given_username?.split(' ')[0]; //handle duplicate users.
     
     conn.query("UPDATE users SET losses = losses + 1 WHERE username = ?", [given_username]);
 }
