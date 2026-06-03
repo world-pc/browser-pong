@@ -116,8 +116,8 @@ async function main() {
 
                     const pwd_hash = await argon2.hash(data['password']);
 
-                    conn.query("INSERT INTO users (username, password) VALUES (?, ?)",
-                               [data['username'], pwd_hash]);
+                    conn.query("INSERT INTO users (username, password, wins, losses) VALUES (?, ?, ?, ?)",
+                               [data['username'], pwd_hash, 0, 0]);
 
                     res.writeHead(201, {'Content-Type': 'application/json'});
                     res.end(JSON.stringify({username_taken: false}));

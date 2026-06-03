@@ -230,7 +230,15 @@
             //(there's probably a neater way to do this)
             const user_menus = document.querySelectorAll('[id^="menu_"]');
             for(const menu of user_menus) {
-                const sid = menu.id.split("_")[1];
+                const menu_split = menu.id.split("_");
+                let sid = '';
+                for(let i = 1; i < menu_split.length; i += 1) {
+                    sid += menu_split[i];
+                    if(i + 1 < menu_split.length) { //there must be a better way of doing this
+                        sid += '_';
+                    }
+                }
+
                 if(sid != target_user) {
                     menu.innerHTML = '';
                 }
