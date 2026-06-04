@@ -7,8 +7,15 @@ const mysql = require('mysql2/promise');
 const bot = require('./bot.js')
 
 const sessions = {};
-const connected_users = {};
+const connected_users = {}; // {socket id: username}
 let conn;
+
+function inAMatch(given_socket_id) {
+    //returns true if the given socket id is in a match currently.
+    //false otherwise.
+    
+    return given_socket_id in connected_users;
+}
 
 async function doesUserExist(given_username, conn) {
     const [rows] = await conn.query("SELECT 1 FROM users WHERE username=?", [given_username]);
@@ -217,6 +224,10 @@ async function main() {
             if(connected_users[data]?.split(" ")[0] == connected_users[socket.id]?.split(" ")[0]) {
                 console.log("users can't challenge themselves..");
             }
+            //we can't challenge users that are currently in matches either.
+            else if(inAMatch(data)) {
+                console.log("can't challenge a user currently in a match..");
+            }
             else {
                 console.log('received "challenge_request" from '+socket.id);
                 console.log('sending "challenge_request" to '+data);
@@ -419,7 +430,6 @@ class Match {
             let bot_ms = bot.botMoveState(this.ball_x, this.ball_y,
                                           this.ball_vx, this.ball_vy,
                                           this.p2_pos, 1);
-            console.log(bot_ms);
 
             if(bot_ms == 'up') {
                 if(this.p2_pos < 4.5) {
