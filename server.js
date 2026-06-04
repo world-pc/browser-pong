@@ -218,20 +218,23 @@ async function main() {
             io.emit('lobby', Object.entries(connected_users));
         });
 
-        socket.on('challenge_request', (data) => {
+        socket.on('challenge_request', (data, callback) => {
 
             //we can't let a user challenge themselves
             if(connected_users[data]?.split(" ")[0] == connected_users[socket.id]?.split(" ")[0]) {
                 console.log("users can't challenge themselves..");
+                callback({message: 'no_self_chall'});
             }
             //we can't challenge users that are currently in matches either.
             else if(inAMatch(data)) {
                 console.log("can't challenge a user currently in a match..");
+                callback({message: 'in_a_match'});
             }
             else {
                 console.log('received "challenge_request" from '+socket.id);
                 console.log('sending "challenge_request" to '+data);
                 io.to(data).emit('challenge_request', [socket.id, connected_users[socket.id]]);
+                callback({message: 'chall_sent'});
             }
         });
 

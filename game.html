@@ -180,9 +180,10 @@
         }
 
         /* submits a request to play with user based on their User ID */
-        function requestChallenge(target_user) {
-            document.getElementById('confirm_challenge_div').innerHTML = 'ok. challenge sent.';
-            socket.emit('challenge_request', target_user);
+        async function requestChallenge(target_user) {
+            document.getElementById('confirm_challenge_div').innerHTML = 'ok. challenge sent.'; //let's modify this to get a response back and change message depending on request accepted/denied.
+            const response = await socket.emitWithAck('challenge_request', target_user);
+            console.log('challenge_request response: ', response.message);
         }
 
         function requestBotChallenge() {
