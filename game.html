@@ -206,18 +206,6 @@
             socket.emit('bot_challenge_request');
         }
 
-        /* confirms that the user wants to challenge someone */
-        /* function challengeConfirmation(target_user) {
-            console.log(target_user, socket.id);
-            const confirm_div = document.getElementById('confirm_challenge_div');
-
-            let div_html = 'U sure u want to challenge ?';
-            div_html += '<button onClick=requestChallenge("'+target_user+'") type="button">ya</button>';
-            div_html += '<button onClick=cancelConfirmation() type="button">nah</button>';
-
-            confirm_div.innerHTML = div_html;
-        } */
-
         /* confirms that the user wants to challenge the pong bot */
         function botChallengeConfirmation() {
             const menu = document.querySelector('.pong_bot_menu');
