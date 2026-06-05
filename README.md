@@ -11,3 +11,4 @@ a multiplayer browser pong game written in nodejs.
 * ~~feature: randomize which side the ball is served to.~~
 * ~~bug: sometimes the submenu on another user doesn't appear.~~
 * ~~bug: THREE isn't loading in chromium incognito windows..~~ 
+* bug: I think the wrong player's getting the win score update.
