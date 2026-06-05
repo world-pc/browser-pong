@@ -324,8 +324,20 @@ class Match {
         this.ball_x = 0;
         this.ball_y = 0;
 
-        this.ball_vx = 0.03;
-        this.ball_vy = 0.03;
+        //randomize which side ball is served to and y-velocity direction
+        if(Math.round(Math.random()) == 1) {
+            this.ball_vx = 0.03;
+        }
+        else {
+            this.ball_vx = -0.03;
+        }
+
+        if(Math.round(Math.random()) == 1) {
+            this.ball_vy = 0.03;
+        }
+        else {
+            this.ball_vy = -0.03;
+        }
 
         this.p1_score = 0;
         this.p2_score = 0;
@@ -342,8 +354,21 @@ class Match {
         this.p1_pos = 0;
         this.p2_pos = 0;
         this.ball_colls = 0;
-        this.ball_vx = 0.03;
-        this.ball_vy = 0.03;
+
+        //randomize x & y velocity trajectories.
+        if(Math.round(Math.random()) == 1) {
+            this.ball_vx = 0.03;
+        }
+        else {
+            this.ball_vx = -0.03;
+        }
+
+        if(Math.round(Math.random()) == 1) {
+            this.ball_vy = 0.03;
+        }
+        else {
+            this.ball_vy = -0.03;
+        }
     }
 
     updateGameState() {
