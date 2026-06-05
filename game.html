@@ -183,6 +183,22 @@
         async function requestChallenge(target_user) {
             document.getElementById('confirm_challenge_div').innerHTML = 'ok. challenge sent.'; //let's modify this to get a response back and change message depending on request accepted/denied.
             const response = await socket.emitWithAck('challenge_request', target_user);
+
+            const cfm_chall_div = document.getElementById('confirm_challenge_div');
+
+            if(response.message === 'self_chall') {
+                cfm_chall_div.style.color = 'red';
+                cfm_chall_div.innerHTML = 'cannot challenge urself.';
+            }
+            else if(response.message === 'in_match') {
+                cfm_chall_div.style.color = 'red';
+                cfm_chall_div.innerHTML = 'cannot challenge user in a match.';
+            }
+            else if(response.message === 'chall_set') {
+                cfm_chall_div.style.color = 'green';
+                cfm_chall_div.innerHTML = 'challenge sent.';
+            }
+
             console.log('challenge_request response: ', response.message);
         }
 
@@ -191,7 +207,7 @@
         }
 
         /* confirms that the user wants to challenge someone */
-        function challengeConfirmation(target_user) {
+        /* function challengeConfirmation(target_user) {
             console.log(target_user, socket.id);
             const confirm_div = document.getElementById('confirm_challenge_div');
 
@@ -200,7 +216,7 @@
             div_html += '<button onClick=cancelConfirmation() type="button">nah</button>';
 
             confirm_div.innerHTML = div_html;
-        }
+        } */
 
         /* confirms that the user wants to challenge the pong bot */
         function botChallengeConfirmation() {
