@@ -116,7 +116,9 @@
             alert('opponent disconnected :\\');
         });
 
+        let my_username;
         socket.on('ur_username', (username) => {
+            my_username = username;
             document.getElementById('greeting').innerHTML = 'welcome, '+username+'.';
         });
 
@@ -163,6 +165,29 @@
 
         //listen for updates to chat log
         socket.on('chatlog', (data) => {
+
+            let lines = data.split('<br />');
+            for(let i = 0; i < lines.length; i += 1) {
+
+                if(lines[i] === '') {
+                    continue;
+                }
+
+                //separate sender from their message
+                const split_index = lines[i].indexOf(':');
+                let [sender, message] = [lines[i].slice(0, split_index), lines[i].slice(split_index + 1)];
+
+                //bold the sender if it's us
+                if(sender === my_username) {
+                    sender = "<b>"+sender+"</b>";
+                }
+
+                //rejoin sender & message, and add back to lines
+                lines[i] = sender+': '+message;
+            }
+
+            data = lines.join('<br />');
+
             document.getElementById('chat').innerHTML = data;
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
         });
