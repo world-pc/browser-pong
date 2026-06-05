@@ -182,6 +182,11 @@
                     sender = "<b>"+sender+"</b>";
                 }
 
+                //highlight the message if we're @'d
+                if(message.includes('@'+my_username)) {
+                    message = '<span style="color: green;"><b>'+message+'</b></span>';
+                }
+
                 //rejoin sender & message, and add back to lines
                 lines[i] = sender+': '+message;
             }
