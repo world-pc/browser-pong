@@ -14,7 +14,14 @@ function inAMatch(given_socket_id) {
     //returns true if the given socket id is in a match currently.
     //false otherwise.
     
-    return given_socket_id in connected_users;
+    for(let i = 0; i < matches.length; i += 1) {
+        if(given_socket_id === matches[i].p1_sid ||
+           given_socket_id === matches[i].p2_sid) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 async function doesUserExist(given_username, conn) {
@@ -223,12 +230,12 @@ async function main() {
             //we can't let a user challenge themselves
             if(connected_users[data]?.split(" ")[0] == connected_users[socket.id]?.split(" ")[0]) {
                 console.log("users can't challenge themselves..");
-                callback({message: 'no_self_chall'});
+                callback({message: 'self_chall'});
             }
             //we can't challenge users that are currently in matches either.
             else if(inAMatch(data)) {
                 console.log("can't challenge a user currently in a match..");
-                callback({message: 'in_a_match'});
+                callback({message: 'in_match'});
             }
             else {
                 console.log('received "challenge_request" from '+socket.id);
