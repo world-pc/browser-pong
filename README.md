@@ -10,4 +10,4 @@ a multiplayer browser pong game written in nodejs.
 * feature: forfeit button.
 * ~~feature: randomize which side the ball is served to.~~
 * ~~bug: sometimes the submenu on another user doesn't appear.~~
-* bug: THREE isn't loading in chromium incognito windows.. 
+* ~~bug: THREE isn't loading in chromium incognito windows..~~ 
