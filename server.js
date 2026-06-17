@@ -189,7 +189,7 @@ async function main() {
 
         connected_users[socket.id] = username;
 
-        io.emit('lobby', Object.entries(connected_users));
+        io.emit('lobby', Object.entries(connected_users).map(e => [...e, inAMatch(e[0])]));
 
 	    //let the connecting user know what their username is.
 	    //just in case they connect multiple times.

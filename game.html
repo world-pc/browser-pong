@@ -98,6 +98,12 @@
             cursor: pointer;
             color: blue;
         }
+        .sid.in_match {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+        .sid.not_in_match {
+            background-color: rgba(0, 255, 0, 1);
+        }
     </style>
     <script src='/socket.io/socket.io.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'></script>
@@ -125,6 +131,8 @@
         socket.on('lobby', (user_dict) => {
             let nu_inner_html = '';
 
+            console.log(user_dict);
+
             //add the option to play against the pong bot
             nu_inner_html += '<tr><td class="pong_bot" onClick=botChallengeConfirmation()>pong bot</td>';
             nu_inner_html += '<td class="pong_bot_menu"></td></tr>';
@@ -136,7 +144,13 @@
                     nu_inner_html += '<td>'+user_dict[i][1]+'</td>';
                 }
                 else {
-                    nu_inner_html += '<td class="sid" onClick=openUserSubMenu("'+user_dict[i][0]+'")>'+user_dict[i][1]+'</td>';
+                    //if the user is in a match
+                    if(user_dict[i][2]) {
+                        nu_inner_html += '<td class="sid in_match" onClick=openUserSubMenu("'+user_dict[i][0]+'")>'+user_dict[i][1]+'</td>';
+                    }
+                    else {
+                        nu_inner_html += '<td class="sid not_in_match" onClick=openUserSubMenu("'+user_dict[i][0]+'")>'+user_dict[i][1]+'</td>';
+                    }
                     nu_inner_html += '<td id="menu_'+user_dict[i][0]+'"></td>';
                 }
 
